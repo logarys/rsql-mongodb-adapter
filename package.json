@@ -22,7 +22,9 @@
     "build": "tsc -p tsconfig.build.json",
     "lint": "tsc -p tsconfig.build.json --noEmit",
     "test": "npm run build && node --test test/*.spec.mjs",
-    "prepublishOnly": "npm run clean && npm run test"
+    "prepublishOnly": "npm run clean && npm run test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "repository": {
     "type": "git",
@@ -46,6 +48,7 @@
     "@logarys/query-adapter-contracts": "^0.1.0"
   },
   "devDependencies": {
+    "prettier": "^3.8.3",
     "typescript": "^5.8.0"
   },
   "engines": {

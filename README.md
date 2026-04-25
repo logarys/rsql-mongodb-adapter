@@ -30,10 +30,7 @@ And returns this MongoDB filter:
 
 ```ts
 {
-  $and: [
-    { level: "error" },
-    { host: "api-01" }
-  ]
+  $and: [{ level: "error" }, { host: "api-01" }];
 }
 ```
 
@@ -79,30 +76,27 @@ Output:
 
 ```ts
 {
-  $and: [
-    { level: "error" },
-    { host: "api-01" }
-  ]
+  $and: [{ level: "error" }, { host: "api-01" }];
 }
 ```
 
 ## Supported RSQL operators
 
-| RSQL operator | MongoDB output |
-| --- | --- |
-| `==` | equality |
-| `!=` | `$ne` |
-| `>` / `=gt=` | `$gt` |
-| `>=` / `=ge=` | `$gte` |
-| `<` / `=lt=` | `$lt` |
-| `<=` / `=le=` | `$lte` |
-| `=in=` | `$in` |
-| `=out=` | `$nin` |
-| `=contains=` | escaped case-insensitive `$regex` |
-| `=starts=` | escaped case-insensitive prefix `$regex` |
-| `=ends=` | escaped case-insensitive suffix `$regex` |
-| `=exists=` | `$exists` |
-| `=regex=` | raw case-insensitive `$regex` |
+| RSQL operator | MongoDB output                           |
+| ------------- | ---------------------------------------- |
+| `==`          | equality                                 |
+| `!=`          | `$ne`                                    |
+| `>` / `=gt=`  | `$gt`                                    |
+| `>=` / `=ge=` | `$gte`                                   |
+| `<` / `=lt=`  | `$lt`                                    |
+| `<=` / `=le=` | `$lte`                                   |
+| `=in=`        | `$in`                                    |
+| `=out=`       | `$nin`                                   |
+| `=contains=`  | escaped case-insensitive `$regex`        |
+| `=starts=`    | escaped case-insensitive prefix `$regex` |
+| `=ends=`      | escaped case-insensitive suffix `$regex` |
+| `=exists=`    | `$exists`                                |
+| `=regex=`     | raw case-insensitive `$regex`            |
 
 ## Logical operators
 
@@ -114,10 +108,7 @@ level==error;host==api-01
 
 ```ts
 {
-  $and: [
-    { level: "error" },
-    { host: "api-01" }
-  ]
+  $and: [{ level: "error" }, { host: "api-01" }];
 }
 ```
 
@@ -129,10 +120,7 @@ level==error,level==critical
 
 ```ts
 {
-  $or: [
-    { level: "error" },
-    { level: "critical" }
-  ]
+  $or: [{ level: "error" }, { level: "critical" }];
 }
 ```
 
@@ -197,12 +185,12 @@ Output:
 
 Values are cast according to the field definition:
 
-| Field type | Example input | Output value |
-| --- | --- | --- |
-| `string` | `error` | `"error"` |
-| `number` | `500` | `500` |
-| `boolean` | `true` | `true` |
-| `date` | `2026-04-25T00:00:00Z` | `Date` |
+| Field type | Example input          | Output value |
+| ---------- | ---------------------- | ------------ |
+| `string`   | `error`                | `"error"`    |
+| `number`   | `500`                  | `500`        |
+| `boolean`  | `true`                 | `true`       |
+| `date`     | `2026-04-25T00:00:00Z` | `Date`       |
 
 ## Security model
 

@@ -88,7 +88,9 @@ function parseComparison(source: string): RsqlComparisonNode {
   };
 }
 
-function findComparisonOperator(source: string): { operator: string; index: number } | null {
+function findComparisonOperator(
+  source: string,
+): { operator: string; index: number } | null {
   let quote: string | null = null;
   let depth = 0;
 
@@ -100,11 +102,9 @@ function findComparisonOperator(source: string): { operator: string; index: numb
         index += 1;
         continue;
       }
-
       if (char === quote) {
         quote = null;
       }
-
       continue;
     }
 
@@ -140,7 +140,11 @@ function findComparisonOperator(source: string): { operator: string; index: numb
 function parseArguments(source: string): string[] {
   const value = source.trim();
 
-  if (value.startsWith("(") && value.endsWith(")") && hasBalancedOuterParentheses(value)) {
+  if (
+    value.startsWith("(") &&
+    value.endsWith(")") &&
+    hasBalancedOuterParentheses(value)
+  ) {
     const inside = value.slice(1, -1);
     return splitTopLevel(inside, ",").map(unquoteValue);
   }
@@ -162,11 +166,9 @@ function splitTopLevel(source: string, separator: string): string[] {
         index += 1;
         continue;
       }
-
       if (char === quote) {
         quote = null;
       }
-
       continue;
     }
 
@@ -182,21 +184,21 @@ function splitTopLevel(source: string, separator: string): string[] {
 
     if (char === ")") {
       depth -= 1;
-
       if (depth < 0) {
-        throw new RsqlSyntaxError(`Unexpected closing parenthesis in: ${source}`);
+        throw new RsqlSyntaxError(
+          `Unexpected closing parenthesis in: ${source}`,
+        );
       }
-
       continue;
     }
 
     if (depth === 0 && char === separator) {
       const part = source.slice(start, index).trim();
-
       if (!part) {
-        throw new RsqlSyntaxError(`Empty expression around '${separator}' in: ${source}`);
+        throw new RsqlSyntaxError(
+          `Empty expression around '${separator}' in: ${source}`,
+        );
       }
-
       parts.push(part);
       start = index + 1;
     }
@@ -213,17 +215,24 @@ function splitTopLevel(source: string, separator: string): string[] {
   const last = source.slice(start).trim();
 
   if (!last) {
-    throw new RsqlSyntaxError(`Empty expression around '${separator}' in: ${source}`);
+    throw new RsqlSyntaxError(
+      `Empty expression around '${separator}' in: ${source}`,
+    );
   }
 
   parts.push(last);
+
   return parts;
 }
 
 function stripOuterParentheses(source: string): string {
   let current = source;
 
-  while (current.startsWith("(") && current.endsWith(")") && hasBalancedOuterParentheses(current)) {
+  while (
+    current.startsWith("(") &&
+    current.endsWith(")") &&
+    hasBalancedOuterParentheses(current)
+  ) {
     current = current.slice(1, -1).trim();
   }
 
@@ -242,11 +251,9 @@ function hasBalancedOuterParentheses(source: string): boolean {
         index += 1;
         continue;
       }
-
       if (char === quote) {
         quote = null;
       }
-
       continue;
     }
 
@@ -261,7 +268,6 @@ function hasBalancedOuterParentheses(source: string): boolean {
 
     if (char === ")") {
       depth -= 1;
-
       if (depth === 0 && index < source.length - 1) {
         return false;
       }
@@ -281,9 +287,7 @@ function unquoteValue(source: string): string {
   const last = value[value.length - 1];
 
   if ((first === '"' && last === '"') || (first === "'" && last === "'")) {
-    return value
-      .slice(1, -1)
-      .replace(/\\([\\"'])/g, "$1");
+    return value.slice(1, -1).replace(/\\([\\"'])/g, "$1");
   }
 
   return value;

@@ -52,18 +52,18 @@ export function createAdapter(): QueryAdapter;
 
 Contributions should preserve the existing mapping:
 
-| RSQL | MongoDB |
-| --- | --- |
-| `==` | equality |
-| `!=` | `$ne` |
-| `>` | `$gt` |
-| `>=` | `$gte` |
-| `<` | `$lt` |
-| `<=` | `$lte` |
-| `=in=` | `$in` |
-| `=out=` | `$nin` |
-| `;` | `$and` |
-| `,` | `$or` |
+| RSQL    | MongoDB  |
+| ------- | -------- |
+| `==`    | equality |
+| `!=`    | `$ne`    |
+| `>`     | `$gt`    |
+| `>=`    | `$gte`   |
+| `<`     | `$lt`    |
+| `<=`    | `$lte`   |
+| `=in=`  | `$in`    |
+| `=out=` | `$nin`   |
+| `;`     | `$and`   |
+| `,`     | `$or`    |
 
 Additional operators may be added when they are useful for logs and safe to execute.
 
