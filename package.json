@@ -1,0 +1,57 @@
+{
+  "name": "@logarys/rsql-mongodb-adapter",
+  "version": "0.1.0",
+  "description": "Logarys query adapter converting RSQL filters to MongoDB queries.",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CONTRIBUTE.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build": "tsc -p tsconfig.build.json",
+    "lint": "tsc -p tsconfig.build.json --noEmit",
+    "test": "npm run build && node --test test/*.spec.mjs",
+    "prepublishOnly": "npm run clean && npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/logarys/rsql-mongodb-adapter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/logarys/rsql-mongodb-adapter/issues"
+  },
+  "homepage": "https://github.com/logarys/rsql-mongodb-adapter#readme",
+  "keywords": [
+    "logarys",
+    "rsql",
+    "mongodb",
+    "query",
+    "adapter",
+    "nestjs"
+  ],
+  "author": "Logarys",
+  "license": "MIT",
+  "dependencies": {
+    "@logarys/query-adapter-contracts": "^0.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
