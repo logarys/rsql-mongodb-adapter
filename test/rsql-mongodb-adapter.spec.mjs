@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { createAdapter, parseRsql, RsqlSyntaxError } from "../dist/index.js";
+import { createAdapter, parseRsql, validateRsqlSyntax, RsqlSyntaxError } from "../dist/index.js";
 
 const allowedFields = {
   level: { type: "string", operators: ["==", "!=", "=in=", "=out="] },
@@ -361,6 +361,41 @@ test("rejects unbalanced parentheses", () => {
   assert.throws(() => parseRsql("level==error)"), /Unexpected closing parenthesis|Invalid RSQL comparison/);
 });
 
+
+
+test("validateRsqlSyntax accepts valid queries", () => {
+  assert.doesNotThrow(() => validateRsqlSyntax("level==error;message==*099*"));
+});
+
+test("convert validates RSQL syntax before field validation", () => {
+  assert.throws(
+    () => convert("unknown=in=value"),
+    /Operator =in= requires a parenthesized argument list/,
+  );
+});
+
+test("rejects in and out operators without parenthesized lists", () => {
+  assert.throws(
+    () => parseRsql("level=in=error"),
+    /Operator =in= requires a parenthesized argument list/,
+  );
+  assert.throws(
+    () => parseRsql("level=out=debug"),
+    /Operator =out= requires a parenthesized argument list/,
+  );
+});
+
+test("rejects malformed quoted values", () => {
+  assert.throws(() => parseRsql('message=="hello"world'), /Unexpected token after quoted value/);
+  assert.throws(() => parseRsql('message==hello"world'), /Unclosed quote|Unexpected quote in unquoted value/);
+});
+
+test("rejects invalid selector characters", () => {
+  assert.throws(() => parseRsql("level name==error"), /Invalid selector syntax/);
+  assert.throws(() => parseRsql("context[service]==api"), /Invalid selector syntax/);
+});
+
+
 test("rejects unknown fields", () => {
   assert.throws(
     () => convert("unknown==value"),
@@ -368,12 +403,14 @@ test("rejects unknown fields", () => {
   );
 });
 
-test("rejects unsafe fields", () => {
+test("rejects invalid selector syntax before conversion", () => {
   assert.throws(
     () => convert("$where==value", { $where: { type: "string", operators: ["=="] } }),
-    /Unsafe field/,
+    RsqlSyntaxError,
   );
+});
 
+test("rejects unsafe fields after syntax validation", () => {
   assert.throws(
     () => convert("__proto__==value", { __proto__: { type: "string", operators: ["=="] } }),
     /Unsafe field/,

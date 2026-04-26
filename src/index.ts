@@ -7,5 +7,5 @@ export function createAdapter(): QueryAdapter {
 
 export { RsqlMongoDbAdapter } from "./rsql-mongodb-adapter.js";
 export type { RsqlMongoDbAdapterConfig } from "./rsql-mongodb-adapter.js";
-export { parseRsql, RsqlSyntaxError } from "./rsql-parser.js";
+export { parseRsql, validateRsqlSyntax, RsqlSyntaxError } from "./rsql-parser.js";
 export type { RsqlComparisonNode, RsqlLogicalNode, RsqlNode } from "./ast.js";

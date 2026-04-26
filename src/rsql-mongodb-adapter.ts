@@ -7,7 +7,7 @@ import type {
   QueryAdapterResult,
 } from "@logarys/query-adapter-contracts";
 import type { RsqlComparisonNode, RsqlNode } from "./ast.js";
-import { parseRsql } from "./rsql-parser.js";
+import { parseRsql, validateRsqlSyntax } from "./rsql-parser.js";
 
 export interface RsqlMongoDbAdapterConfig {
   metadata?: Partial<QueryAdapterMetadata>;
@@ -35,6 +35,7 @@ export class RsqlMongoDbAdapter implements QueryAdapter {
   }
 
   convert(input: QueryAdapterInput): QueryAdapterResult {
+    validateRsqlSyntax(input.query);
     const ast = parseRsql(input.query);
     const allowedFields = input.options?.allowedFields ?? {};
 

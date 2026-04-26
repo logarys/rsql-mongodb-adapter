@@ -27,6 +27,10 @@ export class RsqlSyntaxError extends Error {
   }
 }
 
+export function validateRsqlSyntax(source: string): void {
+  parseRsql(source);
+}
+
 export function parseRsql(source: string): RsqlNode {
   const query = source.trim();
 
@@ -76,9 +80,13 @@ function parseComparison(source: string): RsqlComparisonNode {
     throw new RsqlSyntaxError(`Missing selector in comparison: ${source}`);
   }
 
+  validateSelector(selector);
+
   if (!rawArguments) {
     throw new RsqlSyntaxError(`Missing value in comparison: ${source}`);
   }
+
+  validateOperatorArguments(match.operator, rawArguments, source);
 
   return {
     kind: "comparison",
@@ -137,14 +145,38 @@ function findComparisonOperator(
   return null;
 }
 
-function parseArguments(source: string): string[] {
+function validateSelector(selector: string): void {
+  if (!/^[A-Za-z_][A-Za-z0-9_.-]*$/.test(selector)) {
+    throw new RsqlSyntaxError(`Invalid selector syntax: ${selector}`);
+  }
+}
+
+function validateOperatorArguments(
+  operator: string,
+  rawArguments: string,
+  comparison: string,
+): void {
+  if ((operator === "=in=" || operator === "=out=") && !isParenthesizedList(rawArguments)) {
+    throw new RsqlSyntaxError(
+      `Operator ${operator} requires a parenthesized argument list in: ${comparison}`,
+    );
+  }
+}
+
+function isParenthesizedList(source: string): boolean {
   const value = source.trim();
 
-  if (
+  return (
     value.startsWith("(") &&
     value.endsWith(")") &&
     hasBalancedOuterParentheses(value)
-  ) {
+  );
+}
+
+function parseArguments(source: string): string[] {
+  const value = source.trim();
+
+  if (isParenthesizedList(value)) {
     const inside = value.slice(1, -1);
     return splitTopLevel(inside, ",").map(unquoteValue);
   }
@@ -286,8 +318,16 @@ function unquoteValue(source: string): string {
   const first = value[0];
   const last = value[value.length - 1];
 
-  if ((first === '"' && last === '"') || (first === "'" && last === "'")) {
+  if (first === '"' || first === "'") {
+    if (last !== first) {
+      throw new RsqlSyntaxError(`Unexpected token after quoted value: ${source}`);
+    }
+
     return value.slice(1, -1).replace(/\\([\\"'])/g, "$1");
+  }
+
+  if (value.includes('"') || value.includes("'")) {
+    throw new RsqlSyntaxError(`Unexpected quote in unquoted value: ${source}`);
   }
 
   return value;
